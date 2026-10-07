@@ -1,4 +1,4 @@
-name: Build UTC-IA APK
+name: Build UTC-IA APK V2
 
 on:
   workflow_dispatch:
