@@ -1,4 +1,4 @@
-name: Build UTC-IA APK V2
+name: Build UTC-IA APK
 
 on:
   workflow_dispatch:
@@ -20,7 +20,8 @@ jobs:
             build-essential git zip unzip openjdk-17-jdk \
             autoconf automake libtool pkg-config \
             zlib1g-dev libncurses5-dev libncursesw5-dev \
-            libffi-dev libssl-dev cmake
+            libffi-dev libssl-dev cmake \
+            libltdl-dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,11 +33,18 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython
 
+      - name: Configure Android environment
+        run: |
+          echo "ANDROID_ACCEPT_LICENSES=1" >> "$GITHUB_ENV"
+          echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk" >> "$GITHUB_ENV"
+
       - name: Build debug APK
         env:
           PKG_CONFIG_PATH: ""
+          ACCEPT_ANDROID_SDK_LICENSE: "1"
         run: |
-          buildozer android debug
+          yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
